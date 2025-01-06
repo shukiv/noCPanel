@@ -20,7 +20,8 @@ while true; do
         --menu "Choose an action for $USER:" 15 50 10 \
         1 "Add Virtual Host" \
         2 "List Virtual Hosts" \
-        3 "Exit" \
+	3 "Databases" \
+        4 "Exit" \
         2>&1 >/dev/tty)
 
     clear
@@ -35,6 +36,10 @@ while true; do
             ./list_vhost.sh "$USER"
             ;;
         3) 
+            # Call list_vhost.sh with the user
+            ./mysql.sh "$USER"
+            ;;
+        4) 
             # Exit the menu
             exit 0
             ;;
