@@ -17,7 +17,7 @@ if [[ ! -d "$VHOST_DIR" ]]; then
 fi
 
 # Find vhost files matching the user pattern
-VHOST_FILES=$(find "$VHOST_DIR" -type f -name "${USER}-*.conf" 2>/dev/null)
+VHOST_FILES=$(find "$VHOST_DIR" -type f -name "${USER}@*.conf" 2>/dev/null)
 
 # Check if any vhost files were found
 if [[ -z "$VHOST_FILES" ]]; then
@@ -29,7 +29,7 @@ fi
 VHOST_ENTRIES=()
 while IFS= read -r FILE; do
     # Extract domain from the filename
-    DOMAIN=$(basename "$FILE" | sed -E "s/^${USER}-(.*)\.conf$/\1/")
+    DOMAIN=$(basename "$FILE" | sed -E "s/^${USER}@(.*)\.conf$/\1/")
     VHOST_ENTRIES+=("$FILE" "$DOMAIN")
 done <<< "$VHOST_FILES"
 
@@ -46,14 +46,14 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Extract the domain name
-DOMAIN=$(basename "$CHOSEN_VHOST" | sed -E "s/^${USER}-(.*)\.conf$/\1/")
+DOMAIN=$(basename "$CHOSEN_VHOST" | sed -E "s/^${USER}@(.*)\.conf$/\1/")
 
 # Confirm deletion of the virtual host
 dialog --title "Confirm Deletion" --yesno "Are you sure you want to delete the virtual host:\n\n$DOMAIN" 10 50
 if [[ $? -eq 0 ]]; then
     # Disable the site and remove both vhost files
-    sudo a2dissite "$USER-$DOMAIN" >/dev/null 2>&1
-    sudo rm -f "$VHOST_DIR/$USER-$DOMAIN.conf" "$ENABLED_DIR/$USER-$DOMAIN.conf"
+    sudo a2dissite "$USER@$DOMAIN" >/dev/null 2>&1
+    sudo rm -f "$VHOST_DIR/$USER@$DOMAIN.conf" "$ENABLED_DIR/$USER@$DOMAIN.conf"
     sudo systemctl reload apache2
 
     if [[ $? -eq 0 ]]; then

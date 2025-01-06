@@ -34,7 +34,7 @@ while true; do
             # Call list_vhost.sh with the user
             ./list_vhost.sh "$USER"
             ;;
-        3)
+        3) 
             # Exit the menu
             exit 0
             ;;
