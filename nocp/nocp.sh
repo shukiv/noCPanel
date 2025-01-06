@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd /usr/local/noCPanel/nocp
+
 # Function to display the main menu
 show_main_menu() {
     while true; do

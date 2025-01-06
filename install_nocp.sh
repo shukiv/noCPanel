@@ -24,7 +24,6 @@ sudo apt install mariadb-server -y
 
 # Automate MySQL secure installation
 echo "Securing MySQL installation..."
-#!/bin/bash
 
 # Generate a random password
 ROOT_PASSWORD=$(openssl rand -base64 12)
@@ -47,9 +46,6 @@ DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
 -- Reload privilege tables
 FLUSH PRIVILEGES;
 EOF
-
-# Display the random password
-echo "MySQL root password has been set to: ${ROOT_PASSWORD}"
 
 # Install PHP
 echo "Installing PHP and required extensions..."
@@ -76,9 +72,17 @@ echo "You can test the setup by accessing the following URL: http://localhost/in
 echo "Cleaning up..."
 sudo apt autoremove -y
 
+# Get the package
+git clone https://github.com/shukiv/noCPanel/
+mv noCPanel/ /usr/local/
+ln -s /usr/local/noCPanel/nocp/nocp.sh /usr/bin/nocp
+
 # Finish
 echo "Installation is complete"
 echo "You can access your panel by typing: nocp"
+
+# Display the mysql random password and write to file
+echo "MySQL root password has been set to: ${ROOT_PASSWORD}"
 echo "Root password: ${ROOT_PASSWORD}" > /root/mysql_root_password.txt
 chmod 600 /root/mysql_root_password.txt
 echo "The root password has been saved to /root/mysql_root_password.txt (secure file)."
