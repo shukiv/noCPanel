@@ -24,7 +24,32 @@ sudo apt install mariadb-server -y
 
 # Automate MySQL secure installation
 echo "Securing MySQL installation..."
-sudo mysql_secure_installation
+#!/bin/bash
+
+# Generate a random password
+ROOT_PASSWORD=$(openssl rand -base64 12)
+
+# Run MySQL commands
+mysql --user=root <<EOF
+-- Set root password
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${ROOT_PASSWORD}';
+
+-- Remove anonymous users
+DELETE FROM mysql.user WHERE User='';
+
+-- Disallow root login remotely
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+
+-- Remove test database
+DROP DATABASE IF EXISTS test;
+DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
+
+-- Reload privilege tables
+FLUSH PRIVILEGES;
+EOF
+
+# Display the random password
+echo "MySQL root password has been set to: ${ROOT_PASSWORD}"
 
 # Install PHP
 echo "Installing PHP and required extensions..."
@@ -50,3 +75,10 @@ echo "You can test the setup by accessing the following URL: http://localhost/in
 # Clean up
 echo "Cleaning up..."
 sudo apt autoremove -y
+
+# Finish
+echo "Installation is complete"
+echo "You can access your panel by typing: nocp"
+echo "Root password: ${ROOT_PASSWORD}" > /root/mysql_root_password.txt
+chmod 600 /root/mysql_root_password.txt
+echo "The root password has been saved to /root/mysql_root_password.txt (secure file)."
