@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#apt-get purge dialog apache2 mysql-server php php-mysql libapache2-mod-php php-cli php-common php-mbstring php-xml php-json php-zip
+INTERNET_IP=$(curl -s https://api.ipify.org)
 
 # Update the system
 echo "Updating system..."
@@ -64,10 +64,6 @@ echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php > /dev/null
 echo "Restarting Apache..."
 sudo systemctl restart apache2
 
-# Output installation details
-echo "LAMP stack installation completed!"
-echo "You can test the setup by accessing the following URL: http://localhost/info.php"
-
 # Clean up
 echo "Cleaning up..."
 sudo apt autoremove -y
@@ -106,13 +102,22 @@ fi
 echo "Cleaning up the repository..."
 rm -rf noCPanel
 
+echo ""
+echo "**********************************************************"
+echo ""
 # Finish
 echo "Installation is complete"
-echo "You can access your panel by typing: nocp"
+
+echo "You can test the setup by accessing the following URL: http://$INTERNET_IP/info.php"
 
 # Display the mysql random password and write to file
 echo "MySQL root password has been set to: ${ROOT_PASSWORD}"
 echo "Root password: ${ROOT_PASSWORD}" > /root/mysql_root_password.txt
 echo -e "MYSQL_USER="root"\nMYSQL_PASS="${ROOT_PASSWORD}"" > /usr/local/noCPanel/mysql_db_config.conf
 chmod 600 /root/mysql_root_password.txt
-# echo "The root password has been saved to /root/mysql_root_password.txt (secure file)."
+echo "The root password has been saved to /root/mysql_root_password.txt (secure file)."
+echo ""
+echo "You can access your panel by typing: nocp"
+echo ""
+echo "**********************************************************"
+echo ""
