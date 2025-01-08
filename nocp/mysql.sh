@@ -118,7 +118,16 @@ create_database_and_user() {
         mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "GRANT ALL PRIVILEGES ON $FULL_DB_NAME.* TO '$DB_USER'@'localhost';"
         mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "FLUSH PRIVILEGES;"
 
-        dialog --msgbox "Database and user created successfully.\n\nDatabase: $FULL_DB_NAME\nUser: $DB_USER\nPassword: $DB_PASS" 15 50
+        clear
+        echo -e "\n====================================="
+        echo -e " Database and User Created Successfully "
+        echo -e "====================================="
+        echo -e " Database: $FULL_DB_NAME"
+        echo -e " Username: $DB_USER"
+        echo -e " Password: $DB_PASS"
+        echo -e "====================================="
+        echo -e "\nYou can copy the above information using your mouse."
+        read -p "Press Enter to return to the menu..."
     else
         dialog --msgbox "No database name entered." 10 30
     fi
