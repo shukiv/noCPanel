@@ -38,7 +38,7 @@ SELECTED_USER="$1"
 # Function to list MySQL users for the selected Linux user
 list_mysql_users() {
     SELECTED_USER=$1
-    mysql_users=$(mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "SELECT User FROM mysql.user WHERE User LIKE '${SELECTED_USER}_%';" | grep "${SELECTED_USER}_")
+    mysql_users=$(mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "SELECT User FROM mysql.user WHERE User LIKE 'user_${SELECTED_USER}_%';" | tail -n +2)
 
     if [ -z "$mysql_users" ]; then
         dialog --msgbox "No MySQL users found for Linux user: $SELECTED_USER" 10 30
@@ -85,7 +85,7 @@ confirm_delete() {
         fi
 
         # Determine the associated MySQL user (assumes naming convention)
-        DB_USER="${SELECTED_USER}_dbuser"
+        DB_USER="user_${SELECTED_USER}_$(echo "$DB_NAME" | sed -e "s/^user_${SELECTED_USER}_//")"
 
         # Delete the associated MySQL user
         mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "DROP USER '$DB_USER'@'localhost';"
@@ -106,7 +106,7 @@ create_database_and_user() {
 
     if [ -n "$DB_NAME" ]; then
         FULL_DB_NAME="user_${SELECTED_USER}_${DB_NAME}"
-        DB_USER="${SELECTED_USER}_dbuser"
+        DB_USER="user_${SELECTED_USER}_${DB_NAME}"
         DB_PASS=$(dialog --title "MySQL User Password" --inputbox "Enter the MySQL user password or leave blank to auto-generate one:" 10 50 3>&1 1>&2 2>&3)
         if [ -z "$DB_PASS" ]; then
             DB_PASS=$(openssl rand -base64 12)
@@ -129,16 +129,14 @@ while true; do
     option=$(dialog --title "User: $SELECTED_USER" --menu "Choose an option" 15 50 6 \
         1 "List MySQL Users" \
         2 "List and Delete Databases" \
-        3 "Create a New Database" \
-        4 "Create a Database and MySQL User" \
-        5 "Exit" 3>&1 1>&2 2>&3)
+        3 "Create a Database and MySQL User" \
+        4 "Exit" 3>&1 1>&2 2>&3)
 
     case $option in
         1) list_mysql_users "$SELECTED_USER" ;;
         2) list_databases "$SELECTED_USER" ;;
-        3) create_database "$SELECTED_USER" ;;
-        4) create_database_and_user "$SELECTED_USER" ;;
-        5) break ;;
+        3) create_database_and_user "$SELECTED_USER" ;;
+        4) break ;;
         *) dialog --msgbox "Invalid option!" 10 30 ;;
     esac
 done
