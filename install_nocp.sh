@@ -72,10 +72,39 @@ echo "You can test the setup by accessing the following URL: http://localhost/in
 echo "Cleaning up..."
 sudo apt autoremove -y
 
-# Get the package
+# Define the target directory and symbolic link
+TARGET_DIR="/usr/local/noCPanel"
+SYMLINK="/usr/bin/nocp"
+
+# Check if the directory /usr/local/noCPanel/ exists, if not, create it
+if [ ! -d "$TARGET_DIR" ]; then
+    echo "Creating directory $TARGET_DIR"
+    mkdir -p "$TARGET_DIR"
+fi
+
+# Clone the GitHub repository
+echo "Cloning the repository..."
 git clone https://github.com/shukiv/noCPanel/
-mv noCPanel/ /usr/local/
-ln -s /usr/local/noCPanel/nocp/nocp.sh /usr/bin/nocp
+
+# Copy the contents to the target directory
+echo "Copying files to $TARGET_DIR..."
+cp -r noCPanel/* "$TARGET_DIR/"
+
+# Remove the existing nocp binary if it exists
+echo "Removing existing /usr/bin/nocp..."
+rm -f /usr/bin/nocp
+
+# Create a symbolic link if it doesn't already exist
+if [ ! -L "$SYMLINK" ]; then
+    echo "Creating symbolic link $SYMLINK -> $TARGET_DIR/nocp/nocp.sh"
+    ln -s "$TARGET_DIR/nocp/nocp.sh" "$SYMLINK"
+else
+    echo "Symbolic link $SYMLINK already exists, skipping..."
+fi
+
+# Remove the cloned repository
+echo "Cleaning up the repository..."
+rm -rf noCPanel
 
 # Finish
 echo "Installation is complete"
