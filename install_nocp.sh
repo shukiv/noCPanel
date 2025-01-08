@@ -113,6 +113,6 @@ echo "You can access your panel by typing: nocp"
 # Display the mysql random password and write to file
 echo "MySQL root password has been set to: ${ROOT_PASSWORD}"
 echo "Root password: ${ROOT_PASSWORD}" > /root/mysql_root_password.txt
-echo "MYSQL_USER="root" MYSQL_PASS="${ROOT_PASSWORD}"" > /usr/local/noCPanel/mysql_db_config.conf
+echo -e "MYSQL_USER="root"\nMYSQL_PASS="${ROOT_PASSWORD}"" > /usr/local/noCPanel/mysql_db_config.conf
 chmod 600 /root/mysql_root_password.txt
 # echo "The root password has been saved to /root/mysql_root_password.txt (secure file)."
