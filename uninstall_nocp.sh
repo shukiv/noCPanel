@@ -17,7 +17,7 @@ echo "Removing installed packages..."
 sudo apt-get purge -y dialog apache2 mariadb-server php php-mysql libapache2-mod-php php-cli php-common php-mbstring php-xml php-json php-zip
 
 # Install ceretbot and it's Cloudflare plugin
-sudo apt-get purge certbot python3-certbot-dns-cloudflare python3-certbot-apache
+sudo apt-get purge -y certbot python3-certbot-dns-cloudflare python3-certbot-apache
 
 # Clean up autoremove
 echo "Cleaning up unused packages..."
