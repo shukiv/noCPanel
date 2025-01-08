@@ -46,6 +46,7 @@ done <<< "$VHOST_FILES"
 # Display a menu to select an action
 CHOICE=$(dialog --clear --title "Virtual Hosts for $USER" \
     --menu "Choose an action:" 15 60 10 \
+    "Install SSL certificate" "Install SSL certificate" \
     "Delete Virtual Host" "Delete a virtual host" \
     "Install WordPress" "Install WordPress on a virtual host" 2>&1 >/dev/tty)
 
@@ -53,6 +54,10 @@ if [[ $? -ne 0 ]]; then
     clear
     echo "No action taken."
     exit 0
+fi
+
+if [[ "$CHOICE" == "Install SSL certificate" ]]; then
+            ./ssl.sh "$CHOSEN_VHOST"
 fi
 
 if [[ "$CHOICE" == "Delete Virtual Host" ]]; then

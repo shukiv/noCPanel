@@ -89,14 +89,6 @@ if [[ "$USE_CLOUDFLARE" == "y" || "$USE_CLOUDFLARE" == "yes" ]]; then
     exit 1
   fi
 
-  # Ask user for Cloudflare email
-  echo -e "${COLOR_BOLD}Step 2:${COLOR_RESET} Please enter your Cloudflare email."
-  read -p "$(echo -e "${COLOR_GREEN}Cloudflare Email:${COLOR_RESET} ")" CF_EMAIL
-  if [[ -z "$CF_EMAIL" ]]; then
-    echo -e "${COLOR_BOLD}${COLOR_RED}No Cloudflare email entered. Exiting...${COLOR_RESET}"
-    exit 1
-  fi
-
   # Ask user for Cloudflare token
   echo -e "${COLOR_BOLD}Step 3:${COLOR_RESET} Please enter/paste your Cloudflare API token (then press Enter)."
   read -p "$(echo -e "${COLOR_GREEN}Cloudflare API Token:${COLOR_RESET} ")" CF_API_TOKEN
@@ -109,7 +101,6 @@ if [[ "$USE_CLOUDFLARE" == "y" || "$USE_CLOUDFLARE" == "yes" ]]; then
   CRED_FILE="/root/.cloudflare.ini"
   sudo bash -c "cat <<EOF > '$CRED_FILE'
 # Cloudflare credentials
-# dns_cloudflare_email = $CF_EMAIL
 dns_cloudflare_api_token = $CF_API_TOKEN
 EOF"
   sudo chmod 600 "$CRED_FILE"
