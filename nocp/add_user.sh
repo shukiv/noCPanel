@@ -24,10 +24,17 @@ if [[ $? -ne 0 || -z "$PASSWORD" ]]; then
     exit 1
 fi
 
-# Create the user using adduser
-sudo adduser --disabled-password --gecos "" "$USERNAME"
-sudo adduser www-data "$USERNAME"
-sudo chmod 750 /home/"$USERNAME"
+# Find the next available UID in the 3000-4000 range
+NEXT_UID=$(awk -F: 'BEGIN {max=3000} ($3 >= 3000 && $3 <= 4000) {if ($3 >= max) max=$3} END {print max+1}' /etc/passwd)
+
+# Ensure the UID is within the allowed range
+if [[ "$NEXT_UID" -gt 4000 ]]; then
+    dialog --title "Error" --msgbox "No available UIDs in the 3000-4000 range!" 8 40
+    exit 1
+fi
+
+# Create the user with the specified UID
+sudo useradd --uid "$NEXT_UID" --create-home --shell /bin/bash --groups www-data "$USERNAME"
 
 if [[ $? -ne 0 ]]; then
     dialog --title "Error" --msgbox "Failed to create the user $USERNAME!" 8 40
@@ -37,7 +44,7 @@ fi
 # Set the user's password
 echo "$USERNAME:$PASSWORD" | sudo chpasswd
 if [[ $? -eq 0 ]]; then
-    dialog --title "Success" --msgbox "User $USERNAME has been created successfully!" 8 40
+    dialog --title "Success" --msgbox "User $USERNAME has been created successfully with UID $NEXT_UID!" 8 40
 else
     dialog --title "Error" --msgbox "Failed to set the password for $USERNAME!" 8 40
 fi

@@ -70,6 +70,8 @@ delete_user_databases() {
     # Load MySQL credentials
     load_mysql_credentials
 
+    echo "$MYSQL_USER $MYSQL_PASS" > debug.log
+
     # Get a list of databases matching the user's prefix
     DATABASES=$(mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "SHOW DATABASES LIKE '${db_prefix}%';" -s --skip-column-names)
 
@@ -80,28 +82,6 @@ delete_user_databases() {
             echo "Dropping database: $db"
             mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "DROP DATABASE \`$db\`;"
         done
-    fi
-}
-
-# Function to delete MySQL user associated with the system user
-delete_mysql_user() {
-    local username=$1
-
-    # Load MySQL credentials
-    load_mysql_credentials
-
-    # Check and delete MySQL user
-    MYSQL_USERS=$(mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "SELECT User, Host FROM mysql.user WHERE User LIKE 'user_${username}%';" -s --skip-column-names)
-
-   echo "$MYSQL_USERS"
-
-    if [[ -z "$MYSQL_USERS" ]]; then
-        echo "No MySQL user found for $username."
-    else
-        while read -r user host; do
-            echo "Dropping MySQL user: user_${user}@${host}"
-            mysql -u"$MYSQL_USER" -p"$MYSQL_PASS" -e "DROP USER '${user}'@'${host}';"
-        done <<< "$MYSQL_USERS"
     fi
 }
 
@@ -149,16 +129,13 @@ while true; do
     # If the user confirms
     if [[ $? -eq 0 ]]; then
         # Delete the virtual hosts
-        delete_user_vhosts "$USER_TO_DELETE"
+#        delete_user_vhosts "$USER_TO_DELETE"
 
         # Delete the databases
         delete_user_databases "$USER_TO_DELETE"
 
-        # Delete the MySQL user
-        delete_mysql_user "$USER_TO_DELETE"
-
         # Delete the user
-        delete_user "$USER_TO_DELETE"
+#        delete_user "$USER_TO_DELETE"
 
         dialog --title "Success" --msgbox "User '$USER_TO_DELETE', associated virtual hosts, and databases have been deleted." 8 40
     else

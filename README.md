@@ -24,7 +24,7 @@ A lightweight, simple, and customizable web hosting control panel written entire
 
 ## Requirements
 
-- **Operating System**: Linux-based server (tested on Ubuntu/Debian, CentOS, etc.)  
+- **Operating System**: Linux-based server (tested on Debian 12 only)  
 - **Bash Shell**: Version 4 or higher recommended  
 - **Root/Sudo Access**: Required to install packages and configure services  
 - **Installed Packages** (depending on which features you plan to use):
