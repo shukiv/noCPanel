@@ -64,6 +64,9 @@ echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/info.php > /dev/null
 echo "Restarting Apache..."
 sudo systemctl restart apache2
 
+# Install ceretbot and it's Cloudflare plugin
+sudo apt-get install certbot python3-certbot-dns-cloudflare python3-certbot-apache
+
 # Clean up
 echo "Cleaning up..."
 sudo apt autoremove -y
